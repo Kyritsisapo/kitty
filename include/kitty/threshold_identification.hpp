@@ -72,15 +72,12 @@ namespace kitty
 template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 bool is_threshold( const TT& tt, std::vector<int64_t>* plf = nullptr )
 {	
-	TT ttable = tt;
-	std::vector<bool> inv_var(ttable.num_vars(),false);
+    TT ttable = tt;
+    std::vector<bool> inv_var(ttable.num_vars(),false);
     std::vector<int64_t> linear_form;
     auto num_vars = ttable.num_vars();
     bool n, p;
-    //std::cout << num_vars <<" number of variables \n";
-  
-    
-
+	
 	for (int i = 0; i< num_vars; i++){
 		     
 	  n=p=false;   
@@ -143,14 +140,14 @@ bool is_threshold( const TT& tt, std::vector<int64_t>* plf = nullptr )
 		for(int j = 0; j < Ncol; j++){
 			
 			auto k = 0;
-            colno[k] = j+1;
-            row[j] = ++k;
+            		colno[k] = j+1;
+            		row[j] = ++k;
             
             add_constraintex(lp, k, row, colno, GE, 0);
             
         }
        		
-        // using the on set cubes. First see if they exist, then if they are 1, then add, otherwise dont
+        // using the on set cubes. First see if they exist, then add 1, otherwise 0
         for(int i = 0; i < on_set.size() ; i++){
 			
             auto term = on_set.at(i);
@@ -164,12 +161,12 @@ bool is_threshold( const TT& tt, std::vector<int64_t>* plf = nullptr )
                     
                 }else{
 					
-					colno[j] = j+1;                                        
+		    colno[j] = j+1;                                        
                     row[j] = 0;
                    
                 }
             }
-            // x1 + x2 >= T -> x1 + x2 - T >= 0
+            // ex : x1 + x2 >= T -> x1 + x2 - T >= 0
             colno[num_vars] = T_pos; //T constraint is on num+1
             row[num_vars] = -1;
             add_constraintex(lp, T_pos, row, colno, GE, 0);
@@ -185,18 +182,18 @@ bool is_threshold( const TT& tt, std::vector<int64_t>* plf = nullptr )
 				
                 if(term.get_mask(j)){  
 					
-					colno[j] = j+1;                         
+		    colno[j] = j+1;                         
                     row[j] = 0;
                     
                 }else{
 					
-					colno[j] = j+1;                                             
+		    colno[j] = j+1;                                             
                     row[j] = 1;
                    
                 }
 
             }
-            // x1 + x2 <= T - 1 -> x1 + x2 - T <= -1
+            //ex: x1 + x2 <= T - 1 -> x1 + x2 - T <= -1
             colno[num_vars] = T_pos;
             row[num_vars] = -1;
             add_constraintex(lp, T_pos, row, colno, LE, -1);
@@ -215,7 +212,7 @@ bool is_threshold( const TT& tt, std::vector<int64_t>* plf = nullptr )
         
         if(!set_obj_fnex(lp, Ncol, row, colno))
 			
-			return false;
+		return false;
     }
 
     if(ret == 0) { //set for minimization (code from lpsolve.sourceforge)
@@ -229,7 +226,7 @@ bool is_threshold( const TT& tt, std::vector<int64_t>* plf = nullptr )
             ret = 0;
 		else 
 			
-			return false;
+		return false;
     }
     
     if(ret == 0) {	// fill the linear form 
